@@ -5,7 +5,7 @@ const products = [
         price: 20,
         image: 'https://thumbs.dreamstime.com/b/indian-breakfast-koki-flatbread-raita-yogurt-dip-fried-onion-cool-travel-summer-lunch-dinner-brekkie-steel-plate-south-sindhi-125773554.jpg?w=768',
         category: 'Breakfast',
-        inventory: 50
+        inventory: 30
     },
     {
         id: 2,
@@ -13,7 +13,7 @@ const products = [
         price: 100,
         image: 'https://static.toiimg.com/thumb/63841432.cms?width=573&height=430',
         category: 'South Indian',
-        inventory: 40
+        inventory: 30
     },
     {
         id: 3,
@@ -21,7 +21,7 @@ const products = [
         price: 60,
         image: 'https://media.istockphoto.com/id/1488737992/photo/upma-recipe-suji-ka-upma-rava-upma-with-red-and-coconut-chutney.jpg?s=612x612&w=0&k=20&c=dGTIRLT4c7XdC8xAqkumyuURqMAy3HNQccNjEQT3wmU=',
         category: 'Breakfast',
-        inventory: 35
+        inventory: 30
     },
     {
         id: 4,
@@ -29,7 +29,7 @@ const products = [
         price: 30,
         image: 'https://static.toiimg.com/thumb/61050397.cms?width=573&height=430',
         category: 'Snacks',
-        inventory: 100
+        inventory: 50
     },
     {
         id: 5,
@@ -37,7 +37,7 @@ const products = [
         price: 30,
         image: 'https://static.vecteezy.com/system/resources/thumbnails/053/315/217/small_2x/delicious-bhel-puri-indian-street-food-closeup-photo.jpeg',
         category: 'Chaat',
-        inventory: 80
+        inventory: 30
     },
     {
         id: 6,
@@ -45,7 +45,7 @@ const products = [
         price: 30,
         image: 'https://recipes.timesofindia.com/thumb/53314156.cms?width=1200&height=900',
         category: 'Snacks',
-        inventory: 70
+        inventory: 30
     },
     {
         id: 7,
