@@ -166,6 +166,17 @@ h1 {
     color: var(--text-primary);
 }
 
+.inventory-status {
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.inventory-status.out-of-stock {
+    color: #ef4444;
+    font-weight: 500;
+}
+
 .add-to-cart {
     width: 100%;
     padding: 0.75rem;
@@ -185,6 +196,15 @@ h1 {
 
 .add-to-cart:active {
     transform: scale(0.98);
+}
+
+.add-to-cart:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.add-to-cart:disabled:hover {
+    background-color: #d1d5db;
 }
 
 .cart-sidebar {
@@ -231,6 +251,35 @@ h1 {
     cursor: pointer;
     font-size: 1.2rem;
     padding: 0.25rem;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.quantity-controls button {
+    background-color: var(--background);
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+quantity-controls button:hover {
+    background-color: #e5e7eb;
+}
+
+.quantity-controls span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
 }
 
 .cart-total {
