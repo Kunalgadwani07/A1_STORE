@@ -2,10 +2,10 @@
 const products = [
     {
         id: 1,
-        name: 'Basmati Rice (1kg)',
-        price: 159,
+        name: 'Black People (1Unit)',
+        price: 150,
         image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c',
-        category: 'Groceries'
+        category: 'Niggers'
     },
     {
         id: 2,
