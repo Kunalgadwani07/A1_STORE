@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f8f9fa">
+    <title>Digital Shop with Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://images.unsplash.com">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Digital Shop</h1>
+            <div class="search-cart">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search products...">
+                    <button class="search-button">🔍</button>
+                </div>
+                <button id="cartButton" class="cart-button">
+                    🛒 <span id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div id="productList" class="product-grid"></div>
+            <div id="cart" class="cart-sidebar">
+                <h2>Shopping Cart</h2>
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <strong>Total: ₹<span id="cartTotal">0.00</span></strong>
+                </div>
+                <button id="checkoutButton" class="checkout-button">
+                    Proceed to Checkout
+                </button>
+                <div id="checkoutForm" class="user-details-form hidden">
+                    <h3>Enter Your Details</h3>
+                    <input type="text" id="userName" placeholder="Your Name" required>
+                    <input type="tel" id="userPhone" placeholder="Phone Number" required>
+                    <textarea id="userAddress" placeholder="Delivery Address" required></textarea>
+                    <button id="placeOrderButton" class="checkout-button">
+                        Place Order via WhatsApp
+                    </button>
+                    <button id="backToCartButton" class="checkout-button" style="background-color: var(--text-secondary);">
+                        Back to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
