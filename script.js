@@ -101,6 +101,27 @@ function renderProducts(productsToRender) {
     `}).join('');
 }
 
+function showPopup(message) {
+    const existingPopup = document.querySelector('.popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const popup = document.createElement('div');
+    popup.className = 'popup';
+    popup.textContent = message;
+    document.body.appendChild(popup);
+
+    // Trigger reflow and add show class
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Remove popup after 2 seconds
+    setTimeout(() => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+    }, 2000);
+}
+
 function addToCart(productId) {
     const currentInventory = getCurrentInventory(productId);
     if (currentInventory <= 0) {
@@ -112,6 +133,7 @@ function addToCart(productId) {
         cart.push(product);
         updateCart();
         renderProducts(products);
+        showPopup(`${product.name} added to cart!`);
     }
 }
 
