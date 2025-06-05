@@ -1,59 +1,11 @@
 const products = [
     {
         id: 1,
-        name: 'Sindhi Koki',
-        price: 20,
-        image: 'https://thumbs.dreamstime.com/b/indian-breakfast-koki-flatbread-raita-yogurt-dip-fried-onion-cool-travel-summer-lunch-dinner-brekkie-steel-plate-south-sindhi-125773554.jpg?w=768',
-        category: 'Breakfast',
-        inventory: 30
-    },
-    {
-        id: 2,
-        name: 'Dosa',
-        price: 100,
-        image: 'https://static.toiimg.com/thumb/63841432.cms?width=573&height=430',
-        category: 'South Indian',
-        inventory: 30
-    },
-    {
-        id: 3,
-        name: 'Upma',
-        price: 60,
-        image: 'https://media.istockphoto.com/id/1488737992/photo/upma-recipe-suji-ka-upma-rava-upma-with-red-and-coconut-chutney.jpg?s=612x612&w=0&k=20&c=dGTIRLT4c7XdC8xAqkumyuURqMAy3HNQccNjEQT3wmU=',
-        category: 'Breakfast',
-        inventory: 30
-    },
-    {
-        id: 4,
-        name: 'Samosa',
-        price: 30,
-        image: 'https://static.toiimg.com/thumb/61050397.cms?width=573&height=430',
-        category: 'Snacks',
-        inventory: 50
-    },
-    {
-        id: 5,
-        name: 'Bhel',
-        price: 30,
-        image: 'https://static.vecteezy.com/system/resources/thumbnails/053/315/217/small_2x/delicious-bhel-puri-indian-street-food-closeup-photo.jpeg',
-        category: 'Chaat',
-        inventory: 30
-    },
-    {
-        id: 6,
-        name: 'Kachori',
-        price: 30,
-        image: 'https://recipes.timesofindia.com/thumb/53314156.cms?width=1200&height=900',
-        category: 'Snacks',
-        inventory: 30
-    },
-    {
-        id: 7,
-        name: 'Sindhi Dal Pakwaan',
-        price: 60,
-        image: 'https://www.shutterstock.com/image-photo/dal-pakwan-authentic-sindhi-breakfast-600nw-1624385410.jpg',
-        category: 'Breakfast',
-        inventory: 30
+        name: "Multani mitti powder(100 gms)",
+        price: 15,
+        category: "groceries",
+        inventory: 10,
+        image: "https://t4.ftcdn.net/jpg/01/88/94/37/240_F_188943710_kMaJs701T7fBR8ZG1H3dyLqydNhSFW3q.jpg"
     }
 ];
 
@@ -69,6 +21,27 @@ const checkoutForm = document.getElementById('checkoutForm');
 const placeOrderButton = document.getElementById('placeOrderButton');
 const backToCartButton = document.getElementById('backToCartButton');
 const searchInput = document.getElementById('searchInput');
+const categoryTabs = document.querySelectorAll('.category-tab');
+let currentCategory = 'all';
+
+categoryTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        categoryTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCategory = tab.dataset.category;
+        filterProducts();
+    });
+});
+
+function filterProducts() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = currentCategory === 'all' || product.category === currentCategory;
+        return matchesSearch && matchesCategory;
+    });
+    renderProducts(filteredProducts);
+}
 
 function getOptimizedImageUrl(url) {
     return url.includes('unsplash.com') ? `${url}?auto=format,compress&q=80&w=400` : url;
@@ -90,7 +63,6 @@ function renderProducts(productsToRender) {
             <img src="${getOptimizedImageUrl(product.image)}" alt="${product.name}" class="product-image" loading="lazy">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
-                <p class="product-category">${product.category}</p>
                 <p class="product-price">₹${product.price.toFixed(2)}</p>
                 <p class="inventory-status ${isOutOfStock ? 'out-of-stock' : ''}">${isOutOfStock ? 'Out of Stock' : `${currentInventory} in stock`}</p>
                 <button class="add-to-cart" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled' : ''}>
@@ -214,14 +186,27 @@ function debounce(func, wait) {
     };
 }
 
-searchInput.addEventListener('input', debounce((e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.category.toLowerCase().includes(searchTerm)
-    );
-    renderProducts(filteredProducts);
+searchInput.addEventListener('input', debounce(() => {
+    filterProducts();
 }, 300));
+
+function saveCustomerData(data) {
+    localStorage.setItem('customerData', JSON.stringify(data));
+}
+
+function getCustomerData() {
+    const data = localStorage.getItem('customerData');
+    return data ? JSON.parse(data) : null;
+}
+
+function fillCheckoutForm() {
+    const customerData = getCustomerData();
+    if (customerData) {
+        document.getElementById('userName').value = customerData.name || '';
+        document.getElementById('userPhone').value = customerData.phone || '';
+        document.getElementById('userAddress').value = customerData.address || '';
+    }
+}
 
 checkoutButton.addEventListener('click', () => {
     if (cart.length === 0) {
@@ -230,6 +215,7 @@ checkoutButton.addEventListener('click', () => {
     }
     checkoutButton.style.display = 'none';
     checkoutForm.classList.remove('hidden');
+    fillCheckoutForm(); // Auto-fill the form with stored data
 });
 
 backToCartButton.addEventListener('click', () => {
@@ -242,10 +228,19 @@ placeOrderButton.addEventListener('click', () => {
     const userName = document.getElementById('userName').value.trim();
     const userPhone = document.getElementById('userPhone').value.trim();
     const userAddress = document.getElementById('userAddress').value.trim();
+    
     if (!userName || !userPhone || !userAddress) {
         alert('Please fill in all your details before checkout');
         return;
     }
+
+    // Save customer data
+    saveCustomerData({
+        name: userName,
+        phone: userPhone,
+        address: userAddress
+    });
+
     const groupedItems = groupCartItems();
     const itemsList = groupedItems.map(item =>
         `${item.name} x${item.quantity} - ₹${(item.price * item.quantity).toFixed(2)}`
@@ -253,9 +248,7 @@ placeOrderButton.addEventListener('click', () => {
     const total = groupedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const message = `New Order:\n\nCustomer Details:\nName: ${userName}\nPhone: ${userPhone}\nAddress: ${userAddress}\n\nOrder Items:\n${itemsList}\n\nTotal: ₹${total.toFixed(2)}`;
     window.open(`https://wa.me/918766849418?text=${encodeURIComponent(message)}`, '_blank');
-    document.getElementById('userName').value = '';
-    document.getElementById('userPhone').value = '';
-    document.getElementById('userAddress').value = '';
+    
     cart = [];
     updateCart();
     checkoutForm.classList.add('hidden');
