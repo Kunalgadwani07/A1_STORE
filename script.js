@@ -3,9 +3,19 @@ const products = [
         id: 1,
         name: "Multani mitti powder(100 gms)",
         price: 15,
+        originalPrice: 40,
         category: "groceries",
-        inventory: 10,
-        image: "https://t4.ftcdn.net/jpg/01/88/94/37/240_F_188943710_kMaJs701T7fBR8ZG1H3dyLqydNhSFW3q.jpg"
+        image: "https://t4.ftcdn.net/jpg/01/88/94/37/240_F_188943710_kMaJs701T7fBR8ZG1H3dyLqydNhSFW3q.jpg",
+        description: "Natural clay powder for deep cleansing and skin purification. Perfect for oily skin, helps remove excess oil and impurities. Regular use helps achieve glowing and healthy skin."
+    },
+    {
+        id: 2,
+        name: "Pears Face Wash",
+        price: 135,
+        originalPrice: 160,
+        category: "groceries",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa2-H5iM0jS07WNv0DhL1lsosyYV7xUrRvNFxSCawXHXdpCzDZHJUFt-98tWDydU5H6Us&usqp=CAU",
+        description: "Gentle face wash with pure glycerin for deep cleansing. Suitable for all skin types, leaves skin soft and glowing. Contains natural oils and pure glycerin for moisturizing effect."
     }
 ];
 
@@ -47,30 +57,54 @@ function getOptimizedImageUrl(url) {
     return url.includes('unsplash.com') ? `${url}?auto=format,compress&q=80&w=400` : url;
 }
 
-function getCurrentInventory(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return 0;
-    const inCart = cart.filter(item => item.id === productId).length;
-    return product.inventory - inCart;
-}
-
 function renderProducts(productsToRender) {
     productList.innerHTML = productsToRender.map(product => {
-        const currentInventory = getCurrentInventory(product.id);
-        const isOutOfStock = currentInventory <= 0;
+        const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+        
         return `
         <div class="product-card">
             <img src="${getOptimizedImageUrl(product.image)}" alt="${product.name}" class="product-image" loading="lazy">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
-                <p class="product-price">₹${product.price.toFixed(2)}</p>
-                <p class="inventory-status ${isOutOfStock ? 'out-of-stock' : ''}">${isOutOfStock ? 'Out of Stock' : `${currentInventory} in stock`}</p>
-                <button class="add-to-cart" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled' : ''}>
-                    ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                </button>
+                <div class="price-container">
+                    <p class="product-price">₹${product.price.toFixed(2)}</p>
+                    <p class="original-price">₹${product.originalPrice.toFixed(2)}</p>
+                    <span class="discount-tag">${discount}% OFF</span>
+                </div>
+                <div class="product-buttons">
+                    <button class="description-btn" onclick="showProductDescription(${product.id})">View Details</button>
+                    <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
             </div>
         </div>
     `}).join('');
+}
+
+function showProductDescription(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'description-modal';
+    modal.innerHTML = `
+        <div class="description-content">
+            <button onclick="this.closest('.description-modal').remove()">×</button>
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    // Prevent scrolling of background
+    document.body.style.overflow = 'hidden';
+    modal.addEventListener('click', () => {
+        document.body.style.overflow = '';
+    });
 }
 
 function showPopup(message) {
@@ -95,11 +129,6 @@ function showPopup(message) {
 }
 
 function addToCart(productId) {
-    const currentInventory = getCurrentInventory(productId);
-    if (currentInventory <= 0) {
-        alert('Sorry, this item is out of stock!');
-        return;
-    }
     const product = products.find(p => p.id === productId);
     if (product) {
         cart.push(product);
@@ -131,6 +160,11 @@ function updateCart() {
     if (cart.length === 0) {
         cartItems.innerHTML = '<p>Your cart is empty</p>';
         cartTotal.textContent = '0.00';
+        // Hide checkout form and show checkout button when cart is empty
+        checkoutForm.classList.add('hidden');
+        checkoutButton.style.display = 'block';
+        // Clear address field
+        document.getElementById('userAddress').value = '';
     } else {
         const groupedItems = groupCartItems();
         cartItems.innerHTML = groupedItems.map((item) => `
@@ -190,24 +224,6 @@ searchInput.addEventListener('input', debounce(() => {
     filterProducts();
 }, 300));
 
-function saveCustomerData(data) {
-    localStorage.setItem('customerData', JSON.stringify(data));
-}
-
-function getCustomerData() {
-    const data = localStorage.getItem('customerData');
-    return data ? JSON.parse(data) : null;
-}
-
-function fillCheckoutForm() {
-    const customerData = getCustomerData();
-    if (customerData) {
-        document.getElementById('userName').value = customerData.name || '';
-        document.getElementById('userPhone').value = customerData.phone || '';
-        document.getElementById('userAddress').value = customerData.address || '';
-    }
-}
-
 checkoutButton.addEventListener('click', () => {
     if (cart.length === 0) {
         alert('Your cart is empty!');
@@ -215,7 +231,6 @@ checkoutButton.addEventListener('click', () => {
     }
     checkoutButton.style.display = 'none';
     checkoutForm.classList.remove('hidden');
-    fillCheckoutForm(); // Auto-fill the form with stored data
 });
 
 backToCartButton.addEventListener('click', () => {
@@ -224,29 +239,18 @@ backToCartButton.addEventListener('click', () => {
 });
 
 placeOrderButton.addEventListener('click', () => {
-    if (cart.length === 0) return;
-    const userName = document.getElementById('userName').value.trim();
-    const userPhone = document.getElementById('userPhone').value.trim();
     const userAddress = document.getElementById('userAddress').value.trim();
-    
-    if (!userName || !userPhone || !userAddress) {
-        alert('Please fill in all your details before checkout');
+    if (!userAddress) {
+        alert('Please enter delivery address');
         return;
     }
-
-    // Save customer data
-    saveCustomerData({
-        name: userName,
-        phone: userPhone,
-        address: userAddress
-    });
 
     const groupedItems = groupCartItems();
     const itemsList = groupedItems.map(item =>
         `${item.name} x${item.quantity} - ₹${(item.price * item.quantity).toFixed(2)}`
     ).join('\n');
     const total = groupedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const message = `New Order:\n\nCustomer Details:\nName: ${userName}\nPhone: ${userPhone}\nAddress: ${userAddress}\n\nOrder Items:\n${itemsList}\n\nTotal: ₹${total.toFixed(2)}`;
+    const message = `New Order:\n\nDelivery Address:\n${userAddress}\n\nOrder Items:\n${itemsList}\n\nTotal: ₹${total.toFixed(2)}`;
     window.open(`https://wa.me/918766849418?text=${encodeURIComponent(message)}`, '_blank');
     
     cart = [];

@@ -124,6 +124,7 @@ h1 {
 }
 
 .product-card {
+    position: relative;
     background: var(--card-bg);
     border-radius: 16px;
     overflow: hidden;
@@ -169,10 +170,20 @@ h1 {
 }
 
 .product-price {
-    font-weight: 700;
-    font-size: 1.4rem;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    color: #2ecc71;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.original-price {
+    color: #95a5a6;
+    text-decoration: line-through;
+    font-size: 1rem;
+    position: relative;
+}
+
+.original-price::after {
+    display: none; /* This will make the line disappear */
 }
 
 .inventory-status {
@@ -392,7 +403,8 @@ h1 {
 }
 
 .user-details-form input,
-.user-details-form textarea {
+.user-details-form textarea,
+.user-details-form select {
     width: 100%;
     padding: 1rem;
     border: 2px solid #e5e7eb;
@@ -403,7 +415,8 @@ h1 {
 }
 
 .user-details-form input:focus,
-.user-details-form textarea:focus {
+.user-details-form textarea:focus,
+.user-details-form select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
@@ -412,7 +425,7 @@ h1 {
 
 .user-details-form textarea {
     min-height: 80px;
-    resize: vertical;
+    resize: none;
 }
 
 .popup {
@@ -465,4 +478,118 @@ h1 {
 .category-tab.active {
     background: var(--primary-color);
     color: white;
+}
+
+.discount-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #ff4757, #ff6b81);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(255, 71, 87, 0.3);
+    transform: rotate(3deg);
+    animation: pulse 2s infinite;
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0% { transform: rotate(3deg) scale(1); }
+    50% { transform: rotate(3deg) scale(1.05); }
+    100% { transform: rotate(3deg) scale(1); }
+}
+
+.product-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.description-btn {
+    flex: 1;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #a8e6cf, #3bb78f);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(59, 183, 143, 0.2);
+}
+
+.description-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(59, 183, 143, 0.3);
+    background: linear-gradient(135deg, #3bb78f, #a8e6cf);
+}
+
+.description-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.description-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: var(--hover-shadow);
+    animation: modalPop 0.3s ease;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.description-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.description-content p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.description-content button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.description-content button:hover {
+    color: var(--primary-color);
 }
